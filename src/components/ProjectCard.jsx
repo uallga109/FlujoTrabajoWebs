@@ -1,17 +1,33 @@
 import React, { useState } from 'react';
-import { Calendar, Layout, Trash2, CheckCircle, RefreshCw, PenSquare, Trash, Link } from 'lucide-react';
+import { Calendar, Layout, Trash2, CheckCircle, RefreshCw, PenSquare, Trash, Link, Flame } from 'lucide-react';
+import confetti from 'canvas-confetti';
 import { supabase } from '../lib/supabase';
+import { calculateDaysPassed } from '../lib/dateUtils';
 
 const ProjectCard = ({ proj, fetchProjects, onEdit }) => {
   const [copied, setCopied] = useState(false);
+  const daysOpen = calculateDaysPassed(proj.created_at);
+  const isStagnant = proj.estado === 'activo' && daysOpen > 30;
 
   const updateStatus = async (newStatus) => {
     const { error } = await supabase
       .from('proyectos')
       .update({ estado: newStatus })
       .eq('id', proj.id);
-    if (!error) fetchProjects();
+    
+    if (!error) {
+      if (newStatus === 'completado') {
+        confetti({
+          particleCount: 150,
+          spread: 70,
+          origin: { y: 0.6 },
+          zIndex: 9999
+        });
+      }
+      fetchProjects();
+    }
   };
+// ... rest of the component
 
   const deleteProject = async () => {
     if (window.confirm("¿Estás seguro de eliminar físicamente este proyecto? No hay vuelta atrás.")) {
@@ -29,7 +45,7 @@ const ProjectCard = ({ proj, fetchProjects, onEdit }) => {
   };
 
   return (
-    <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm hover:shadow-md transition-all group relative">
+    <div className={`border rounded-2xl p-6 shadow-sm hover:shadow-md transition-all group relative ${isStagnant ? 'bg-red-50 border-red-200' : 'bg-white border-gray-200'}`}>
       {/* Copy link toast */}
       {copied && (
         <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-xs font-semibold px-4 py-2 rounded-full whitespace-nowrap shadow-lg animate-bounce">
@@ -37,10 +53,18 @@ const ProjectCard = ({ proj, fetchProjects, onEdit }) => {
         </div>
       )}
 
-      <div className="flex justify-between items-start mb-4 pb-4 border-b border-gray-100 border-dashed">
+      <div className={`flex justify-between items-start mb-4 pb-4 border-b border-dashed ${isStagnant ? 'border-red-200' : 'border-gray-100'}`}>
         <div>
-          <h3 className="text-xl font-bold text-gray-900 m-0">{proj.nombre_cliente}</h3>
-          <span className="text-blue-600 font-extrabold text-lg block mt-1">{proj.precio_total}€</span>
+          <h3 className="text-xl font-bold text-gray-900 m-0 flex items-center gap-2">
+            {proj.nombre_cliente}
+            {isStagnant && <Flame size={20} className="text-red-500 animate-pulse" />}
+          </h3>
+          <span className={`font-extrabold text-lg block mt-1 ${isStagnant ? 'text-red-700' : 'text-blue-600'}`}>{proj.precio_total}€</span>
+          {isStagnant && (
+            <span className="inline-block mt-2 text-[11px] font-bold text-red-600 uppercase tracking-widest bg-red-100 px-2 py-1 rounded-lg">
+              ⚠️ ¡Lleva {daysOpen} días estancado!
+            </span>
+          )}
         </div>
         <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
           {proj.estado === 'activo' && (

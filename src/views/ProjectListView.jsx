@@ -3,6 +3,7 @@ import { LayoutGrid, List } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import ProjectCard from '../components/ProjectCard';
 import KanbanView from './KanbanView';
+import FinancialSummary from '../components/FinancialSummary';
 
 const ProjectListView = ({ viewType, onEdit }) => {
   const [projectsList, setProjectsList] = useState([]);
@@ -84,6 +85,9 @@ const ProjectListView = ({ viewType, onEdit }) => {
           </div>
         )}
       </div>
+
+      {/* Financial Health Summary (Dashboard Only) */}
+      {viewType === 'dashboard' && <FinancialSummary />}
 
       {/* Kanban view (dashboard only) */}
       {viewType === 'dashboard' && displayMode === 'kanban' ? (

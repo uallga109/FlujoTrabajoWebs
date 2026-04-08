@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { DragDropContext, Droppable } from '@hello-pangea/dnd';
+import confetti from 'canvas-confetti';
 import KanbanCard from '../components/KanbanCard';
 import { supabase } from '../lib/supabase';
 
@@ -59,10 +60,18 @@ const COLUMNAS = [
     colorBadge: 'bg-purple-100 text-purple-700',
     colorDrop: 'bg-purple-50/60',
   },
+  {
+    id: 'completado',
+    titulo: '4. Completado',
+    emoji: '✅',
+    colorHeader: 'bg-green-50 border-green-200',
+    colorBadge: 'bg-green-100 text-green-700',
+    colorDrop: 'bg-green-50/60',
+  },
 ];
 
 const KanbanView = () => {
-  const [columns, setColumns] = useState({ pendiente: [], desarrollo: [], revision: [] });
+  const [columns, setColumns] = useState({ pendiente: [], desarrollo: [], revision: [], completado: [] });
   const [isLoading, setIsLoading] = useState(true);
 
   const fetchKanbanProjects = async () => {
@@ -76,7 +85,7 @@ const KanbanView = () => {
     if (error) {
       console.error('Error cargando Kanban:', error);
     } else {
-      const grouped = { pendiente: [], desarrollo: [], revision: [] };
+      const grouped = { pendiente: [], desarrollo: [], revision: [], completado: [] };
       (data || []).forEach(proj => {
         const col = proj.etapa_kanban || 'pendiente';
         if (grouped[col]) grouped[col].push(proj);
@@ -112,16 +121,32 @@ const KanbanView = () => {
       [destCol]: destItems,
     }));
 
-    // Persist new stage to Supabase
+    // Persist changes to Supabase
+    const updates = { etapa_kanban: destCol };
+    if (destCol === 'completado') {
+      updates.estado = 'completado';
+    }
+
     const { error } = await supabase
       .from('proyectos')
-      .update({ etapa_kanban: destCol })
+      .update(updates)
       .eq('id', draggableId);
 
     if (error) {
       console.error('Error actualizando etapa Kanban:', error);
       // Revert local state on failure
       fetchKanbanProjects();
+    } else if (destCol === 'completado') {
+      // Trigger celebration!
+      confetti({
+        particleCount: 150,
+        spread: 70,
+        origin: { y: 0.6 },
+        zIndex: 9999
+      });
+      // Optionally remove from Kanban after a short delay since it's now 'completado'
+      // and Kanban only shows 'activo'. But we already moved it in state.
+      // Refreshing will remove it from 'activo'.
     }
 
     // Fire webhook notification when a card enters "desarrollo"
