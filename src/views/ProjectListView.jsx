@@ -51,36 +51,36 @@ const ProjectListView = ({ viewType, onEdit }) => {
   return (
     <div className="max-w-7xl mx-auto w-full">
       {/* Header */}
-      <div className="flex items-start justify-between mb-8 flex-wrap gap-4">
+      <div className="flex items-center justify-between mb-6 gap-4 flex-wrap">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-1">{title}</h1>
-          <p className="text-gray-500">{subtitle}</p>
+          <h1 className="text-xl font-bold text-gray-900 dark:text-white tracking-tight">{title}</h1>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5 font-medium">{subtitle}</p>
         </div>
 
         {/* View toggle — only visible on Dashboard */}
         {viewType === 'dashboard' && (
-          <div className="flex items-center bg-gray-100 p-1 rounded-xl gap-1">
+          <div className="flex items-center bg-gray-100 dark:bg-white/[0.04] p-1 rounded-lg gap-0.5 border border-gray-200 dark:border-white/[0.06]">
             <button
               onClick={() => setDisplayMode('list')}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all ${
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition-all duration-200 ${
                 displayMode === 'list'
-                  ? 'bg-white text-gray-900 shadow-sm'
-                  : 'text-gray-500 hover:text-gray-700'
+                  ? 'bg-white dark:bg-[#161b27] text-gray-900 dark:text-white shadow-sm border border-gray-200 dark:border-white/10'
+                  : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'
               }`}
             >
-              <List size={16} />
-              Vista Lista
+              <List size={14} />
+              Lista
             </button>
             <button
               onClick={() => setDisplayMode('kanban')}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all ${
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition-all duration-200 ${
                 displayMode === 'kanban'
-                  ? 'bg-white text-gray-900 shadow-sm'
-                  : 'text-gray-500 hover:text-gray-700'
+                  ? 'bg-white dark:bg-[#161b27] text-gray-900 dark:text-white shadow-sm border border-gray-200 dark:border-white/10'
+                  : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'
               }`}
             >
-              <LayoutGrid size={16} />
-              Vista Kanban
+              <LayoutGrid size={14} />
+              Kanban
             </button>
           </div>
         )}
@@ -94,11 +94,11 @@ const ProjectListView = ({ viewType, onEdit }) => {
         <KanbanView />
       ) : (
         // List / Grid view
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
           {isLoading ? (
-            <div className="col-span-full py-12 text-center border-2 border-dashed border-gray-200 rounded-2xl">
-              <p className="text-gray-500 font-medium animate-pulse">Cargando proyectos...</p>
-            </div>
+            Array.from({ length: 3 }).map((_, i) => (
+              <div key={i} className="h-48 bg-white dark:bg-[#161b27] border border-gray-200 dark:border-white/[0.06] rounded-2xl animate-pulse" />
+            ))
           ) : projectsList.map(proj => (
             <ProjectCard
               key={proj.id}
@@ -108,8 +108,8 @@ const ProjectListView = ({ viewType, onEdit }) => {
             />
           ))}
           {!isLoading && projectsList.length === 0 && (
-            <div className="col-span-full py-16 text-center border-2 border-dashed border-gray-200 rounded-2xl bg-gray-50">
-              <p className="text-gray-500 font-medium text-lg">No hay proyectos en esta vista todavía.</p>
+            <div className="col-span-full py-16 text-center border border-dashed border-gray-200 dark:border-white/10 rounded-2xl">
+              <p className="text-sm text-gray-400 dark:text-gray-500 font-medium">No hay proyectos en esta sección todavía.</p>
             </div>
           )}
         </div>

@@ -1,12 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Routes, Route } from 'react-router-dom';
-import { CheckCircle } from 'lucide-react';
 
 import Sidebar from './components/Sidebar';
 import ProjectListView from './views/ProjectListView';
 import CreateProjectView from './views/CreateProjectView';
 import EditModal from './components/EditModal';
 import ClientPortalView from './views/ClientPortalView';
+import AdvancedStatsView from './views/AdvancedStatsView';
+import SettingsView from './views/SettingsView';
 
 // ── CRM Layout (internal, with Sidebar) ──────────────────
 function CRMApp() {
@@ -14,21 +15,49 @@ function CRMApp() {
   const [showSuccess, setShowSuccess] = useState(false);
   const [editingProject, setEditingProject] = useState(null);
   const [refreshKey, setRefreshKey] = useState(0);
+  
+  const [theme, setTheme] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('theme') || 'light';
+    }
+    return 'light';
+  });
+
+  useEffect(() => {
+    const root = window.document.documentElement;
+    if (theme === 'dark') {
+      root.classList.add('dark');
+    } else {
+      root.classList.remove('dark');
+    }
+    localStorage.setItem('theme', theme);
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme(theme === 'light' ? 'dark' : 'light');
+  };
 
   const fetchProjectsCallback = () => {
     setRefreshKey(prev => prev + 1);
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex font-sans text-gray-900">
-      <Sidebar currentView={currentView} setCurrentView={setCurrentView} />
+    <div className="min-h-screen flex bg-gray-50 dark:bg-[#0c111d] transition-colors duration-300">
+      <Sidebar 
+        currentView={currentView} 
+        setCurrentView={setCurrentView}
+        theme={theme}
+        toggleTheme={toggleTheme}
+      />
 
-      <main className="ml-64 flex-1 p-8">
+      <main className="ml-60 flex-1 p-8 min-h-screen">
         {/* Global success toast */}
         {showSuccess && (
-          <div className="fixed top-6 right-6 z-50 bg-green-50 text-green-800 border border-green-200 px-6 py-4 rounded-xl shadow-lg flex items-center gap-3 animate-pulse">
-            <CheckCircle size={24} className="text-green-600" />
-            <strong className="font-semibold text-lg">¡Proyecto creado con éxito!</strong>
+          <div className="fixed top-5 right-5 z-50 bg-white dark:bg-[#161b27] text-gray-900 dark:text-white border border-gray-200 dark:border-white/10 px-5 py-3.5 rounded-xl shadow-lg flex items-center gap-3 animate-in slide-in-from-right-4 duration-300">
+            <div className="w-5 h-5 bg-emerald-500 rounded-full flex items-center justify-center shrink-0">
+              <svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+            </div>
+            <span className="text-sm font-semibold">Proyecto creado correctamente</span>
           </div>
         )}
 
@@ -45,6 +74,14 @@ function CRMApp() {
             setCurrentView={setCurrentView}
             setShowSuccess={setShowSuccess}
           />
+        )}
+        
+        {currentView === 'stats' && (
+          <AdvancedStatsView />
+        )}
+
+        {currentView === 'settings' && (
+          <SettingsView theme={theme} toggleTheme={toggleTheme} />
         )}
       </main>
 

@@ -167,17 +167,17 @@ const KanbanView = () => {
 
   return (
     <DragDropContext onDragEnd={onDragEnd}>
-      <div className="flex gap-6 overflow-x-auto pb-4">
+      <div className="flex gap-6 overflow-x-auto pb-6 px-1 animate-in slide-in-from-bottom-4 duration-500">
         {COLUMNAS.map(col => {
           const cards = columns[col.id] || [];
           return (
-            <div key={col.id} className="flex-1 min-w-[280px] flex flex-col">
+            <div key={col.id} className="flex-1 min-w-[300px] flex flex-col">
               {/* Column Header */}
-              <div className={`border rounded-xl px-4 py-3 mb-3 flex items-center justify-between ${col.colorHeader}`}>
-                <span className="font-bold text-gray-800 text-sm">
-                  {col.emoji} {col.titulo}
+              <div className={`border rounded-2xl px-5 py-4 mb-4 flex items-center justify-between shadow-sm dark:bg-slate-800/50 dark:border-white/10 backdrop-blur-sm ${col.colorHeader.replace('border-', 'border-').replace('bg-', 'bg-').split(' ')[0]} dark:!bg-transparent`}>
+                <span className="font-extrabold text-gray-900 dark:text-white text-sm flex items-center gap-2">
+                  <span className="text-lg">{col.emoji}</span> {col.titulo}
                 </span>
-                <span className={`text-xs font-bold px-2 py-1 rounded-full ${col.colorBadge}`}>
+                <span className={`text-xs font-black px-3 py-1 rounded-full shadow-inner dark:bg-white/10 dark:text-gray-300 ${col.colorBadge}`}>
                   {cards.length}
                 </span>
               </div>
@@ -188,16 +188,16 @@ const KanbanView = () => {
                   <div
                     ref={provided.innerRef}
                     {...provided.droppableProps}
-                    className={`flex-1 min-h-[400px] rounded-xl p-3 transition-colors duration-200 border-2 border-dashed ${
+                    className={`flex-1 min-h-[500px] rounded-3xl p-4 transition-all duration-300 border-2 border-dashed ${
                       snapshot.isDraggingOver
-                        ? 'border-blue-300 bg-blue-50'
-                        : 'border-gray-200 ' + col.colorDrop
+                        ? 'border-blue-400 bg-blue-50/50 dark:bg-blue-500/10 dark:border-blue-500 shadow-inner'
+                        : `border-gray-200 dark:border-white/5 bg-gray-50/30 dark:bg-slate-900/50 ${col.colorDrop}`
                     }`}
                   >
                     {cards.length === 0 && !snapshot.isDraggingOver && (
-                      <p className="text-center text-gray-400 text-sm mt-8">
-                        Sin proyectos aquí
-                      </p>
+                      <div className="flex flex-col items-center justify-center h-40 opacity-50">
+                        <p className="text-gray-400 dark:text-gray-500 font-medium text-sm">Sin proyectos aquí</p>
+                      </div>
                     )}
                     {cards.map((proj, index) => (
                       <KanbanCard key={proj.id} proj={proj} index={index} />
