@@ -97,11 +97,16 @@ function CRMApp() {
 }
 
 // ── Root: Router switchboard ──────────────────────────────
+import ProjectLayout from './views/ProjectLayout';
+
 function App() {
   return (
     <Routes>
       {/* Public client portal */}
       <Route path="/portal/:id" element={<ClientPortalView />} />
+
+      {/* Internal project view */}
+      <Route path="/proyecto/:id/*" element={<ProjectLayout />} />
 
       {/* CRM app — all other paths fall here */}
       <Route path="/*" element={<CRMApp />} />

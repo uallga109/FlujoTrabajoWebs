@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Calendar, Globe, Trash2, CheckCircle, RefreshCw, PenSquare, Trash, Link, AlertTriangle, Clock } from 'lucide-react';
+import { Calendar, Globe, Trash2, CheckCircle, RefreshCw, PenSquare, Trash, Link as LinkIcon, AlertTriangle, Clock, ChevronRight } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import confetti from 'canvas-confetti';
 import { supabase } from '../lib/supabase';
 import { calculateDaysPassed } from '../lib/dateUtils';
@@ -104,13 +105,6 @@ const ProjectCard = ({ proj, fetchProjects, onEdit }) => {
             {proj.estado === 'activo' && (
               <>
                 <button
-                  onClick={() => onEdit(proj)}
-                  className="p-1.5 rounded-lg text-gray-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-500/10 transition-colors"
-                  title="Editar"
-                >
-                  <PenSquare size={15} />
-                </button>
-                <button
                   onClick={() => updateStatus('completado')}
                   className="p-1.5 rounded-lg text-gray-400 hover:text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-500/10 transition-colors"
                   title="Marcar como completado"
@@ -164,6 +158,14 @@ const ProjectCard = ({ proj, fetchProjects, onEdit }) => {
             Portal del cliente
           </button>
         </div>
+        
+        {/* Acceder Button */}
+        <Link 
+          to={`/proyecto/${proj.id}`}
+          className="mt-1 w-full flex items-center justify-center gap-2 py-3 bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold rounded-xl transition-all shadow-sm hover:shadow active:scale-[0.98]"
+        >
+          Acceder al Proyecto
+        </Link>
       </div>
     </div>
   );

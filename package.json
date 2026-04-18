@@ -2,17 +2,37 @@
   "name": "budget-calculator",
   "private": true,
   "version": "0.0.0",
+  "description": "Aplicacion de automatizacion",
+  "author": "Tu Nombre",
+  "main": "main.cjs",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "electron": "npx electron .",
+    "generar-exe": "npm run build && electron-builder --win"
+  },
+  "build": {
+    "appId": "com.tuapp.flujotrabajo",
+    "productName": "Mi Flujo de Trabajo",
+    "directories": {
+      "output": "lanzamiento"
+    },
+    "files": [
+      "dist/**/*",
+      "main.cjs"
+    ],
+    "win": {
+      "target": "nsis"
+    }
   },
   "dependencies": {
     "@hello-pangea/dnd": "^18.0.1",
     "@supabase/supabase-js": "^2.102.1",
     "canvas-confetti": "^1.9.4",
+    "electron-updater": "^6.8.3",
     "jspdf": "^4.2.1",
     "lucide-react": "^1.7.0",
     "react": "^19.2.4",
@@ -27,6 +47,8 @@
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.1",
     "autoprefixer": "^10.4.27",
+    "electron": "^41.2.1",
+    "electron-builder": "^26.8.1",
     "eslint": "^9.39.4",
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-react-refresh": "^0.5.2",
