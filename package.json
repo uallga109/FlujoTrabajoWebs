@@ -1,7 +1,7 @@
 {
   "name": "budget-calculator",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.1",
   "description": "Aplicacion de automatizacion",
   "author": "Tu Nombre",
   "main": "main.cjs",
@@ -12,11 +12,19 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "electron": "npx electron .",
-    "generar-exe": "npm run build && electron-builder --win"
+    "generar-exe": "npm run build && electron-builder --win",
+    "publicar-exe": "npm run build && electron-builder --win -p always"
   },
   "build": {
     "appId": "com.tuapp.flujotrabajo",
     "productName": "Mi Flujo de Trabajo",
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "uallga109",
+        "repo": "FlujoTrabajoWebs"
+      }
+    ],
     "directories": {
       "output": "lanzamiento"
     },
